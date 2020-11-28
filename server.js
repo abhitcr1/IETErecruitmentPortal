@@ -33,14 +33,11 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 //mongo db
-const mongoURI =
-    "mongodb+srv://admin-Abhinav:admin-Abhinav@cluster0-fz1t0.mongodb.net/IETERecruitmentPortal";
-mongoose
-    .connect(mongoURI, {
+const mongoURI ="mongodb+srv://admin-Abhinav:admin-Abhinav@cluster0-fz1t0.mongodb.net/IETERecruitmentPortal";
+mongoose.connect(mongoURI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-    })
-    .then(() => {
+    }).then(() => {
         console.log("database has been connected");
     });
 mongoose.set("useCreateIndex", true);
@@ -57,6 +54,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         
     },
+    registration:{type:String, required:true},
     contact_number: {
         type: Number,
     },
@@ -86,7 +84,6 @@ app.get("/recruitments", function (req, res) {
 });
 
 // ========================= Authentication start =================== //
-
 app.get("/login/:type", function (req, res) {
     let type = req.params.type
     let passedMessage = req.query.message;
@@ -111,7 +108,7 @@ app.get("/register/:type", function (req, res) {
 // POST for the registration of the user
 app.post("/register/:type", async function (req, res) {
     let auth = req.user
-    const {first_name,last_name, username, password, contact_number,repassword } = req.body;
+    const {first_name,last_name, username, password,registration, contact_number,repassword } = req.body;
 
     if (password === repassword) {
         User.register({ username: username }, password, function (err, user) {
@@ -122,9 +119,10 @@ app.post("/register/:type", async function (req, res) {
         } else {
             passport.authenticate("local")(req, res, async function () {
                user.type = req.params.type;
-                user.contact_number = contact_number,
-                user.first_name = first_name,
+                user.contact_number = contact_number
+                user.first_name = first_name
                 user.last_name = last_name
+                user.registration = registration
                 await user.save();
                 if(req.params.type === "admin") res.redirect("/adminPanel")
                 res.redirect(req.session.returnTo || '/');
@@ -195,16 +193,34 @@ app.get("/logout", function (req, res) {
     req.logOut();
     res.redirect(req.session.returnTo || "/")
 });
-// ===================== Authntication end ====================== //
 
 // ===================== get and post for quiz ================= //
-
 app.get("/quizPortal/:domain", async function (req, res) {
     let auth = req.isAuthenticated();
     if (auth) {
         let domain = req.params.domain
-        let quizQuestions = await Quiz.find();
-        res.render("quizPortal", { quizQuestions })
+        if (domain === "ece") {
+            let quizQuestions = await QuizEce.find();
+            res.render("quizPortal", { quizQuestions })
+        } else if (domain === "cse") {
+            let quizQuestions = await QuizCse.find();
+            res.render("quizPortal", { quizQuestions })
+        }else if (domain === "design") {
+            let quizQuestions = await QuizDesign.find();
+            res.render("quizPortal", { quizQuestions })
+        }else if (domain === "editorial") {
+            let quizQuestions = await QuizEditorial.find();
+            res.render("quizPortal", { quizQuestions })
+        }
+        else if (domain === "management") {
+            let quizQuestions = await QuizManagement.find();
+            res.render("quizPortal", { quizQuestions })
+        }
+        else if (domain === "photography") {
+            let quizQuestions = await QuizPhotography.find();
+            res.render("quizPortal", { quizQuestions })
+        }
+        
     } else {
         res.redirect("/login/user")
     }
@@ -232,8 +248,6 @@ app.post("/quizPortal", async function (req, res) {
         res.redirect("/login/user")
     }
 })
-
-//======================== send =============== //
 
 //=====================admin portal ============ //
 app.get("/admin", async function (req, res) {

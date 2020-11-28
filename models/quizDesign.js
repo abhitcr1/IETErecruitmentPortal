@@ -19,4 +19,4 @@ const quizDesignSchema = new mongoose.Schema({
     nameOfImage:String
 });
 
-module.exports = QuizCse= mongoose.model("QuizCse", quizDesignSchema);
+module.exports = QuizDesign= mongoose.model("QuizDesign", quizDesignSchema);

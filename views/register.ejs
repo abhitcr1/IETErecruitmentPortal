@@ -62,89 +62,95 @@
             </div>
         </nav>
     </div>
+    <% if(passedMessage){ %>
 
-    <body>
-
-        <div class="wrapper" style="background-image: url('images/bg-registration-form-2.jpg');">
-            <div class="inner">
-                <form action="/register/user" method="POST">
-                    <h3>Register Now</h3>
-                    <div class="form-group">
-                        <div class="form-wrapper">
-                            <label for="">
-                                <input name="first_name" placeholder=" " type="text" class="form-control">
-                                <span>First Name</span>
-                            </label>
-                        </div>
-                        <div class="form-wrapper">
-                            <label for="">
-                                <input name="last_name" placeholder=" " type="text" class="form-control">
-                                <span>Last Name</span>
-                            </label>
-                        </div>
+    <div class="alert alert-warning alert-dismissible fade show container" role="alert">
+        <strong>Oops!</strong> <%= passedMessage %>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <% } %>
+    <div class="wrapper" style="background-image: url('images/bg-registration-form-2.jpg');">
+        <div class="inner">
+            <form action="/register/user" method="POST">
+                <h3>Register Now</h3>
+                <div class="form-group">
+                    <div class="form-wrapper">
+                        <label for="">
+                            <input name="first_name" placeholder=" " type="text" class="form-control">
+                            <span>First Name</span>
+                        </label>
                     </div>
                     <div class="form-wrapper">
-
                         <label for="">
-                            <input name="username" placeholder=" " type="password" class="form-control">
-                            <span>Email</span>
+                            <input name="last_name" placeholder=" " type="text" class="form-control">
+                            <span>Last Name</span>
                         </label>
-
                     </div>
-                    <div class="form-wrapper">
+                </div>
+                <div class="form-wrapper">
 
-                        <label for="">
-                            <input name="registration" placeholder=" " type="password" class="form-control">
-                            <span>Registration Number</span>
-                        </label>
+                    <label for="">
+                        <input name="username" placeholder=" " type="email" class="form-control">
+                        <span>Email</span>
+                    </label>
 
-                    </div>
-                    <div class="form-wrapper">
+                </div>
+                <div class="form-wrapper">
 
-                        <label for="">
-                            <input name="contact_number" placeholder=" " type="password" class="form-control">
-                            <span>Phone Number</span>
-                        </label>
+                    <label for="">
+                        <input name="registration" placeholder=" " type="text" class="form-control">
+                        <span>Registration Number</span>
+                    </label>
 
-                    </div>
-                    <div class="form-wrapper">
+                </div>
+                <div class="form-wrapper">
 
-                        <label for="">
-                            <input name="password" placeholder=" " type="password" class="form-control">
-                            <span>Password</span>
-                        </label>
+                    <label for="">
+                        <input name="contact_number" placeholder=" " type="text" class="form-control">
+                        <span>Phone Number</span>
+                    </label>
 
-                    </div>
-                    <div class="form-wrapper">
+                </div>
+                <div class="form-wrapper">
 
-                        <label for="">
-                            <input name="repassword" placeholder=" " type="password" class="form-control">
-                            <span>Re type password</span>
-                        </label>
+                    <label for="">
+                        <input name="password" placeholder=" " type="password" class="form-control">
+                        <span>Password</span>
+                    </label>
 
-                    </div>
-                    <button type="submit">Register</button>
-                    <p style="text-align: center;padding-top:40px; font-size:1.2rem">Already a user? <a
-                            href="/login/user">Login</a></p>
-                </form>
-            </div>
+                </div>
+                <div class="form-wrapper">
+
+                    <label for="">
+                        <input name="repassword" placeholder=" " type="password" class="form-control">
+                        <span>Re type password</span>
+                    </label>
+
+                </div>
+                <button class="button-submit" type="submit">Register</button>
+                <p style="text-align: center;padding-top:40px; font-size:1.2rem">Already a user? <a
+                        href="/login/user">Login</a></p>
+            </form>
         </div>
-        <!--Footer-->
-        <div class="footer">
-            <div class="fixed-bottom footer-content">Visit us at <strong>https://ietevit.com/ </strong></div>
-        </div>
-        <!-- Optional JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-            crossorigin="anonymous"></script>
-        <script src="https://kit.fontawesome.com/222c4d2c03.js" crossorigin="anonymous"></script>
-    </body>
+    </div>
+    <!--Footer-->
+    <div class="footer">
+        <div class="fixed-bottom footer-content">Visit us at <strong>https://ietevit.com/ </strong></div>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/222c4d2c03.js" crossorigin="anonymous"></script>
+</body>
 
 </html>

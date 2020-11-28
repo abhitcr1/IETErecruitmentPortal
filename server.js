@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         
     },
-    registration:{type:String, required:true},
+    registration:{type:String},
     contact_number: {
         type: Number,
     },

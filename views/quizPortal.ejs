@@ -1,12 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Portal</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!--Google Font Roboto-->
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;900&display=swap');
+    </style>
+    <!-- Style Sheet -->
+    <link rel="stylesheet" href="/css/homeStyles.css" />
+
+    <title>Quiz Portl</title>
+    <style>
+        .nav-pills-custom .nav-link {
+            color: #aaa;
+            background: #fff;
+            position: relative;
+        }
+
+        button {
+            border-radius: 30px !important;
+            padding: 10px 20px !important;
+        }
+
+        .nav-pills-custom .nav-link.active {
+            color: #45b649;
+            background: #fff;
+        }
+
+
+        /* Add indicator arrow for the active tab */
+        @media (min-width: 992px) {
+            .nav-pills-custom .nav-link::before {
+                content: '';
+                display: block;
+                border-top: 8px solid transparent;
+                border-left: 10px solid #fff;
+                border-bottom: 8px solid transparent;
+                position: absolute;
+                top: 50%;
+                right: -10px;
+                transform: translateY(-50%);
+                opacity: 0;
+            }
+        }
+
+        .nav-pills-custom .nav-link.active::before {
+            opacity: 1;
+        }
+
         .option {
             cursor: pointer;
         }
@@ -18,26 +68,99 @@
         button {
             margin: 5px;
         }
+
+        ul {
+            list-style-type: none;
+        }
     </style>
 </head>
 
 <body>
-    <% quizQuestions.forEach(function(d){ %>
-    <% d.questions.forEach(function(e){ %>
-    <h4><%= e.question %> </h4>
-    <ul question="<%= e.question %> ">
-        <% e.options.forEach(function(l){ %>
-        <li> <button class="option btn btn-primary"><%= l %> </button></li>
-        <% }) %>
-        <button class="toSave btn btn-success">Submit</button>
+    <!--Main Section-->
 
-    </ul>
-    <% }) %>
-    <% }) %>
-    <button id="finalSubmit" class="btn btn-danger">Final Submit</button>
-    <!-- ======================= Scripts ======================================== -->
+    <!-- Demo header-->
+    <!-- Demo header-->
+    <section class="py-5 header">
+        <div class="container py-4">
+            <header class="text-center mb-5 pb-5 text-white">
+                <h1 class="display-4">IETE recruitment exam <span id="domain-info"><%= domain %> </span>Domain</h1>
+            </header>
+
+
+            <div class="row">
+                <div class="col-md-3">
+                    <!-- Tabs nav -->
+                    <div class="nav flex-column nav-pills nav-pills-custom" id="v-pills-tab" role="tablist"
+                        aria-orientation="vertical">
+                        <% for(let i=0; i<quizQuestions[0].questions.length; i++){ %>
+                        <a class="nav-link mb-3 p-3 shadow <%= i==0&&"active"%> " data-toggle="pill"
+                            href="#<%= quizQuestions[0].questions[i].question.replace(/\s/g,'') %>" role="tab"
+                            aria-selected="true">
+
+                            <span class="font-weight-bold small text-uppercase">Question <%= i+1 %> </span></a>
+                        <% } %>
+
+
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-9">
+                    <!-- Tabs content -->
+                    <div class="tab-content" id="v-pills-tabContent">
+                        <% let j=0 %>
+                        <% quizQuestions[0].questions.forEach(function(q){ %>
+                        <div class="tab-pane fade shadow rounded bg-white show <%= j==0 && "active"  %>  p-5"
+                            id="<%= q.question.replace(/\s/g,'') %>" role="tabpanel">
+                            <h4 class="font-italic mb-4">Q. <%= q.question %> </h4>
+                            <p class="font-italic text-muted mb-2">
+                            <ul question="<%= q.question %> ">
+
+                                <% q.options.forEach(function(l){ %>
+                                <li> <button class="option btn btn-primary"><%= l %> </button></li>
+                                <% }) %>
+                                <button class="toSave btn btn-success">Submit</button>
+
+                            </ul>
+                            </p>
+                        </div>
+                        <% j++ %>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <button id="finalSubmit" class="btn btn-danger">Final Submit</button>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!--Footer-->
+
+    <div class="footer">
+        <div class="fixed-bottom footer-content">Visit us at <strong>https://ietevit.com/ </strong></div>
+    </div>
+
+
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/222c4d2c03.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script>
         let answers = [];
         $(".option").click(function () {
@@ -52,13 +175,16 @@
                 $(this).after(` <button class=" btn btn-success disabled">Submitted</button>`)
             })
         });
+        let domain = $("#domain-info").text()
+        console.log(domain)
         $("#finalSubmit").click(function () {
             $.ajax({
                 type: "POST",
-                url: "/quizPortal",
+                url: `/quizPortal/${domain}`,
                 data: { answers },
                 success: function (data) {
-                    console.log(data)
+                    window.location.replace("/thanks");
+
                 },
 
             });

@@ -82,7 +82,9 @@ app.get("/about", function (req, res) {
 app.get("/recruitments", function (req, res) {
     res.render("recruitments");
 });
-
+app.get("/thanks", function (req, res) {
+    res.render("thanks")
+})
 // ========================= Authentication start =================== //
 app.get("/login/:type", function (req, res) {
     let type = req.params.type
@@ -195,55 +197,151 @@ app.get("/logout", function (req, res) {
 });
 
 // ===================== get and post for quiz ================= //
+app.get("/instruction/:domain", function (req, res) {
+    let auth = req.isAuthenticated();
+    if (auth) {
+        let domain = req.params.domain;
+        res.render("instructions",{domain})
+    } else {
+        res.redirect("/login/user")
+    }
+
+})
 app.get("/quizPortal/:domain", async function (req, res) {
     let auth = req.isAuthenticated();
     if (auth) {
         let domain = req.params.domain
         if (domain === "ece") {
             let quizQuestions = await QuizEce.find();
-            res.render("quizPortal", { quizQuestions })
+           
+            res.render("quizPortal", { quizQuestions,domain })
         } else if (domain === "cse") {
             let quizQuestions = await QuizCse.find();
-            res.render("quizPortal", { quizQuestions })
+            res.render("quizPortal", { quizQuestions,domain })
         }else if (domain === "design") {
             let quizQuestions = await QuizDesign.find();
-            res.render("quizPortal", { quizQuestions })
+            res.render("quizPortal", { quizQuestions,domain })
         }else if (domain === "editorial") {
             let quizQuestions = await QuizEditorial.find();
-            res.render("quizPortal", { quizQuestions })
+            res.render("quizPortal", { quizQuestions,domain })
         }
         else if (domain === "management") {
             let quizQuestions = await QuizManagement.find();
-            res.render("quizPortal", { quizQuestions })
+            res.render("quizPortal", { quizQuestions,domain })
         }
         else if (domain === "photography") {
             let quizQuestions = await QuizPhotography.find();
-            res.render("quizPortal", { quizQuestions })
+            res.render("quizPortal", { quizQuestions,domain })
         }
         
     } else {
         res.redirect("/login/user")
     }
 });
-app.post("/quizPortal", async function (req, res) {
+app.post("/quizPortal/:domain", async function (req, res) {
     let auth = req.isAuthenticated();
     if (auth) {
         let correctAnswers = []
         let quizAnswers = req.body.answers;
-        let questions = await Quiz.find();
-        quizAnswers.forEach(f => {
-            for (let i = 0; i < questions[0].questions.length; i++) {
-                const e = questions[0].questions[i];
+        let domain = req.params.domain
+        if (quizAnswers) {
+            if (domain === "ece") {
+                let questions = await QuizEce.find();
+                quizAnswers.forEach(f => {
+                    for (let i = 0; i < questions[0].questions.length; i++) {
+                        const e = questions[0].questions[i];
                
-                if (f.question.replace(/\s/g,'') === e.question.replace(/\s/g,'')) {
-                    if (f.answer.replace(/\s/g,'') === e.answer.replace(/\s/g,'')) {
-                        correctAnswers.push(f)
+                        if (f.question.replace(/\s/g, '') === e.question.replace(/\s/g, '')) {
+                            if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
+                                correctAnswers.push(f)
+                            }
+                        }
                     }
-                }
+                });
+                console.log(correctAnswers);
+                res.end(correctAnswers.length.toString())
+            } else if (domain === "cse") {
+                let questions = await QuizCse.find();
+                quizAnswers.forEach(f => {
+                    for (let i = 0; i < questions[0].questions.length; i++) {
+                        const e = questions[0].questions[i];
+               
+                        if (f.question.replace(/\s/g, '') === e.question.replace(/\s/g, '')) {
+                            if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
+                                correctAnswers.push(f)
+                            }
+                        }
+                    }
+                });
+                console.log(correctAnswers);
+                res.end(correctAnswers.length.toString())
+            } else if (domain === "design") {
+                let questions = await QuizDesign.find();
+                quizAnswers.forEach(f => {
+                    for (let i = 0; i < questions[0].questions.length; i++) {
+                        const e = questions[0].questions[i];
+               
+                        if (f.question.replace(/\s/g, '') === e.question.replace(/\s/g, '')) {
+                            if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
+                                correctAnswers.push(f)
+                            }
+                        }
+                    }
+            
+                });
+                console.log(correctAnswers);
+                res.end(correctAnswers.length.toString())
+            } else if (domain === "editorial") {
+                let questions = await QuizEditorial.find();
+                quizAnswers.forEach(f => {
+                    for (let i = 0; i < questions[0].questions.length; i++) {
+                        const e = questions[0].questions[i];
+               
+                        if (f.question.replace(/\s/g, '') === e.question.replace(/\s/g, '')) {
+                            if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
+                                correctAnswers.push(f)
+                            }
+                        }
+                    }
+                });
+                console.log(correctAnswers);
+                res.end(correctAnswers.length.toString())
             }
-        });
-        console.log( correctAnswers );
-        res.end(correctAnswers.length.toString())
+            else if (domain === "management") {
+                let questions = await QuizManagement.find();
+                quizAnswers.forEach(f => {
+                    for (let i = 0; i < questions[0].questions.length; i++) {
+                        const e = questions[0].questions[i];
+               
+                        if (f.question.replace(/\s/g, '') === e.question.replace(/\s/g, '')) {
+                            if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
+                                correctAnswers.push(f)
+                            }
+                        }
+                    }
+                });
+                console.log(correctAnswers);
+                res.end(correctAnswers.length.toString())
+            }
+            else if (domain === "photography") {
+                let questions = await QuizPhotography.find();
+                quizAnswers.forEach(f => {
+                    for (let i = 0; i < questions[0].questions.length; i++) {
+                        const e = questions[0].questions[i];
+               
+                        if (f.question.replace(/\s/g, '') === e.question.replace(/\s/g, '')) {
+                            if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
+                                correctAnswers.push(f)
+                            }
+                        }
+                    }
+                });
+                console.log(correctAnswers);
+                res.end(correctAnswers.length.toString())
+            }
+        } else {
+             res.end("your score is 0")
+        }
     } else {
         res.redirect("/login/user")
     }

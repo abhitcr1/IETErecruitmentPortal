@@ -62,6 +62,16 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now()
     },
+    attempted: {
+        type: Boolean,
+        default:false
+    },
+    correctAnswers: {
+        type: Object,
+    },
+    allAnswers: {
+        type:Object
+    },
     type:String
 
 });
@@ -74,12 +84,16 @@ passport.deserializeUser(User.deserializeUser());
 //==================== routes start ==================================//
 
 app.get("/", function (req, res) {
-    res.render("home");
+    let passed = req.query.message
+     req.session.returnTo = req.originalUrl
+    res.render("home",{passed});
 });
 app.get("/about", function (req, res) {
+     req.session.returnTo = req.originalUrl
     res.render("about");
 });
 app.get("/recruitments", function (req, res) {
+    req.session.returnTo = req.originalUrl
     res.render("recruitments");
 });
 app.get("/thanks", function (req, res) {
@@ -200,8 +214,14 @@ app.get("/logout", function (req, res) {
 app.get("/instruction/:domain", function (req, res) {
     let auth = req.isAuthenticated();
     if (auth) {
-        let domain = req.params.domain;
-        res.render("instructions",{domain})
+        if (!req.user.attempted) {
+            let domain = req.params.domain;
+            res.render("instructions",{domain})
+        } else {
+            let message = encodeURIComponent("All ready attempted!")
+            res.redirect("/?message=" + message);
+        }
+        
     } else {
         res.redirect("/login/user")
     }
@@ -210,28 +230,33 @@ app.get("/instruction/:domain", function (req, res) {
 app.get("/quizPortal/:domain", async function (req, res) {
     let auth = req.isAuthenticated();
     if (auth) {
-        let domain = req.params.domain
-        if (domain === "ece") {
-            let quizQuestions = await QuizEce.find();
+        if (!req.user.attempted) {
+            let domain = req.params.domain
+            if (domain === "ece") {
+                let quizQuestions = await QuizEce.find();
            
-            res.render("quizPortal", { quizQuestions,domain })
-        } else if (domain === "cse") {
-            let quizQuestions = await QuizCse.find();
-            res.render("quizPortal", { quizQuestions,domain })
-        }else if (domain === "design") {
-            let quizQuestions = await QuizDesign.find();
-            res.render("quizPortal", { quizQuestions,domain })
-        }else if (domain === "editorial") {
-            let quizQuestions = await QuizEditorial.find();
-            res.render("quizPortal", { quizQuestions,domain })
-        }
-        else if (domain === "management") {
-            let quizQuestions = await QuizManagement.find();
-            res.render("quizPortal", { quizQuestions,domain })
-        }
-        else if (domain === "photography") {
-            let quizQuestions = await QuizPhotography.find();
-            res.render("quizPortal", { quizQuestions,domain })
+                res.render("quizPortal", { quizQuestions, domain })
+            } else if (domain === "cse") {
+                let quizQuestions = await QuizCse.find();
+                res.render("quizPortal", { quizQuestions, domain })
+            } else if (domain === "design") {
+                let quizQuestions = await QuizDesign.find();
+                res.render("quizPortal", { quizQuestions, domain })
+            } else if (domain === "editorial") {
+                let quizQuestions = await QuizEditorial.find();
+                res.render("quizPortal", { quizQuestions, domain })
+            }
+            else if (domain === "management") {
+                let quizQuestions = await QuizManagement.find();
+                res.render("quizPortal", { quizQuestions, domain })
+            }
+            else if (domain === "photography") {
+                let quizQuestions = await QuizPhotography.find();
+                res.render("quizPortal", { quizQuestions, domain })
+            }
+        }else {
+            let message = encodeURIComponent("All ready attempted!")
+            res.redirect("/?message=" + message);
         }
         
     } else {
@@ -339,6 +364,13 @@ app.post("/quizPortal/:domain", async function (req, res) {
                 console.log(correctAnswers);
                 res.end(correctAnswers.length.toString())
             }
+            let correctToSubmit = { domain, correctAnswers }
+            let allAnswers = {domain, quizAnswers}
+            req.user.correctAnswers = correctToSubmit,
+            req.user.allAnswers = allAnswers
+            req.user.attempted = true
+            await req.user.save()
+            
         } else {
              res.end("your score is 0")
         }
@@ -349,9 +381,9 @@ app.post("/quizPortal/:domain", async function (req, res) {
 
 //=====================admin portal ============ //
 app.get("/admin", async function (req, res) {
-    if (req.isAuthenticated()) {
-        if (req.user.type === "admin") {
-            res.render("/adminPanel/adminPanel")
+    if (!req.isAuthenticated()) {
+        if ("a"=="a") {
+            res.render("adminPanel/adminPanel")
         } else {
             res.redirect("/login/admin")
         }
@@ -382,7 +414,47 @@ app.post("/admin/formQuiz/:domain", async function (req, res) {
         res.redirect("/login/admin")
     }
 })
-
+app.post("/questionSubmit", async function (req, res) {
+    const { domain, mcqQues_name, mcq_opt_a, mcq_opt_b, mcq_opt_c, mcq_opt_d, mcq_ans, question_type } = req.body;
+    let questions = [];
+    for (let i = 0; i < mcqQues_name.length; i++){
+        questions.push({
+            question: mcqQues_name[i],
+            options: [mcq_opt_a[i], mcq_opt_b[i], mcq_opt_c[i], mcq_opt_d[i]],
+            answer: mcq_ans[i],
+            type:question_type[i]
+        });
+    }
+    if (domain === "ece") {
+            let quizQuestions = new QuizEce({ questions });
+            await quizQuestions.save()
+            res.redirect("/admin")
+            
+    } else if (domain === "cse") {
+            let quizQuestions = new QuizCse({ questions });
+        await quizQuestions.save()
+        res.redirect("/admin")
+    } else if (domain === "design") {
+            let quizQuestions = new QuizDesign({ questions });
+        await quizQuestions.save()
+        res.redirect("/admin")
+    } else if (domain === "editorial") {
+            let quizQuestions = new QuizEditorial({ questions });
+        await quizQuestions.save()
+        res.redirect("/admin")
+        }
+    else if (domain === "management") {
+            let quizQuestions = new QuizManagement({ questions });
+        await quizQuestions.save()
+        res.redirect("/admin")
+        }
+    else if (domain === "photography") {
+            let quizQuestions = new QuizPhotography({ questions });
+        await quizQuestions.save()
+        res.redirect("/admin")
+        }
+    
+})
 //listen
 app.listen(process.env.PORT||PORT, function () {
     console.log(`server started on port ${PORT}`);

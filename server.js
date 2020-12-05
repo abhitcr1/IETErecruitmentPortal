@@ -3,6 +3,7 @@ const PORT = 10000;
 const path = require("path");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
+const { DateTime } = require("luxon");
 //auth
 const session = require("express-session");
 const bodyParser = require("body-parser");
@@ -71,6 +72,9 @@ const userSchema = new mongoose.Schema({
     },
     allAnswers: {
         type:Object
+    },
+    startTime: {
+        type: Date,
     },
     type:String
 
@@ -231,6 +235,14 @@ app.get("/quizPortal/:domain", async function (req, res) {
     let auth = req.isAuthenticated();
     if (auth) {
         if (!req.user.attempted) {
+            if (req.user.startTime) {
+                let difference = Date.now() - req.user.startTime;
+                let remainingTime = Math.round((difference/1000)/60);
+            } else {
+                req.user.startTime = Date.now();
+                req.user.save()
+            }
+            
             let domain = req.params.domain
             if (domain === "ece") {
                 let quizQuestions = await QuizEce.find();
@@ -253,6 +265,9 @@ app.get("/quizPortal/:domain", async function (req, res) {
             else if (domain === "photography") {
                 let quizQuestions = await QuizPhotography.find();
                 res.render("quizPortal", { quizQuestions, domain })
+            } else {
+                let message = encodeURIComponent("Don't try to act smart!");
+                res.redirect("/?message=" + message);
             }
         }else {
             let message = encodeURIComponent("All ready attempted!")
@@ -275,15 +290,19 @@ app.post("/quizPortal/:domain", async function (req, res) {
                 quizAnswers.forEach(f => {
                     for (let i = 0; i < questions[0].questions.length; i++) {
                         const e = questions[0].questions[i];
-               
+                        
                         if (f.question.replace(/\s/g, '') === e.question.replace(/\s/g, '')) {
-                            if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
-                                correctAnswers.push(f)
-                            }
+                            if (e.type === "MCQ") {
+                                console.log("found mcqs");
+                                if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
+                                    correctAnswers.push(f);
+                                };
+                            } else if(e.type === "LA") {
+                                correctAnswers.push(f);
+                            };
                         }
                     }
                 });
-                console.log(correctAnswers);
                 res.end(correctAnswers.length.toString())
             } else if (domain === "cse") {
                 let questions = await QuizCse.find();
@@ -292,9 +311,13 @@ app.post("/quizPortal/:domain", async function (req, res) {
                         const e = questions[0].questions[i];
                
                         if (f.question.replace(/\s/g, '') === e.question.replace(/\s/g, '')) {
-                            if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
-                                correctAnswers.push(f)
-                            }
+                            if (e.type === "MCQ") {
+                                if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
+                                    correctAnswers.push(f);
+                                };
+                            } else if(e.type === "LA") {
+                                correctAnswers.push(f);
+                            };
                         }
                     }
                 });
@@ -307,9 +330,13 @@ app.post("/quizPortal/:domain", async function (req, res) {
                         const e = questions[0].questions[i];
                
                         if (f.question.replace(/\s/g, '') === e.question.replace(/\s/g, '')) {
-                            if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
-                                correctAnswers.push(f)
-                            }
+                            if (e.type === "MCQ") {
+                                if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
+                                    correctAnswers.push(f);
+                                };
+                            } else if(e.type === "LA") {
+                                correctAnswers.push(f);
+                            };
                         }
                     }
             
@@ -323,9 +350,13 @@ app.post("/quizPortal/:domain", async function (req, res) {
                         const e = questions[0].questions[i];
                
                         if (f.question.replace(/\s/g, '') === e.question.replace(/\s/g, '')) {
-                            if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
-                                correctAnswers.push(f)
-                            }
+                            if (e.type === "MCQ") {
+                                if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
+                                    correctAnswers.push(f);
+                                };
+                            } else if(e.type === "LA") {
+                                correctAnswers.push(f);
+                            };
                         }
                     }
                 });
@@ -339,9 +370,13 @@ app.post("/quizPortal/:domain", async function (req, res) {
                         const e = questions[0].questions[i];
                
                         if (f.question.replace(/\s/g, '') === e.question.replace(/\s/g, '')) {
-                            if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
-                                correctAnswers.push(f)
-                            }
+                            if (e.type === "MCQ") {
+                                if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
+                                    correctAnswers.push(f);
+                                };
+                            } else if(e.type === "LA") {
+                                correctAnswers.push(f);
+                            };
                         }
                     }
                 });
@@ -355,9 +390,13 @@ app.post("/quizPortal/:domain", async function (req, res) {
                         const e = questions[0].questions[i];
                
                         if (f.question.replace(/\s/g, '') === e.question.replace(/\s/g, '')) {
-                            if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
-                                correctAnswers.push(f)
-                            }
+                            if (e.type === "MCQ") {
+                                if (f.answer.replace(/\s/g, '') === e.answer.replace(/\s/g, '')) {
+                                    correctAnswers.push(f);
+                                };
+                            } else if(e.type === "LA") {
+                                correctAnswers.push(f);
+                            };
                         }
                     }
                 });
@@ -378,7 +417,15 @@ app.post("/quizPortal/:domain", async function (req, res) {
         res.redirect("/login/user")
     }
 })
-
+app.post("/getUserData", async function (req, res) {
+    let auth = req.isAuthenticated();
+    if (auth) {
+        let user = JSON.stringify(req.user) ;
+        res.end(user)
+    } else {
+        res.end("null")
+    }
+})
 //=====================admin portal ============ //
 app.get("/admin", async function (req, res) {
     if (!req.isAuthenticated()) {
@@ -415,16 +462,27 @@ app.post("/admin/formQuiz/:domain", async function (req, res) {
     }
 })
 app.post("/questionSubmit", async function (req, res) {
-    const { domain, mcqQues_name, mcq_opt_a, mcq_opt_b, mcq_opt_c, mcq_opt_d, mcq_ans, question_type } = req.body;
+    const {laQues_name, domain, mcqQues_name, mcq_opt_a, mcq_opt_b, mcq_opt_c, mcq_opt_d, mcq_ans, question_type } = req.body;
     let questions = [];
-    for (let i = 0; i < mcqQues_name.length; i++){
-        questions.push({
-            question: mcqQues_name[i],
-            options: [mcq_opt_a[i], mcq_opt_b[i], mcq_opt_c[i], mcq_opt_d[i]],
-            answer: mcq_ans[i],
-            type:question_type[i]
-        });
+    for (let i = 0; i < question_type.length; i++){
+        if (question_type[i] === "MCQ") {
+            questions.push({
+                question: mcqQues_name[i],
+                options: [mcq_opt_a[i], mcq_opt_b[i], mcq_opt_c[i], mcq_opt_d[i]],
+                answer: mcq_ans[i],
+                type:question_type[i]
+            });
+        } else {
+            questions.push({
+                question: laQues_name[i+1-mcqQues_name.length],
+                type:question_type[i]
+            });
+        }
+        
     }
+    console.log(req.body);
+    console.log(questions);
+    
     if (domain === "ece") {
             let quizQuestions = new QuizEce({ questions });
             await quizQuestions.save()

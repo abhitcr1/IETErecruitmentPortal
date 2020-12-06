@@ -90,18 +90,18 @@ passport.deserializeUser(User.deserializeUser());
 app.get("/", function (req, res) {
     let passed = req.query.message
      req.session.returnTo = req.originalUrl
-    res.render("home",{passed});
+    res.render("home",{passed, user:req.user});
 });
 app.get("/about", function (req, res) {
      req.session.returnTo = req.originalUrl
-    res.render("about");
+    res.render("about",{user:req.user});
 });
 app.get("/recruitments", function (req, res) {
     req.session.returnTo = req.originalUrl
-    res.render("recruitments");
+    res.render("recruitments",{user:req.user});
 });
 app.get("/thanks", function (req, res) {
-    res.render("thanks")
+    res.render("thanks",{user:req.user})
 })
 // ========================= Authentication start =================== //
 app.get("/login/:type", function (req, res) {
@@ -220,7 +220,7 @@ app.get("/instruction/:domain", function (req, res) {
     if (auth) {
         if (!req.user.attempted) {
             let domain = req.params.domain;
-            res.render("instructions",{domain})
+            res.render("instructions",{domain,user:req.user})
         } else {
             let message = encodeURIComponent("All ready attempted!")
             res.redirect("/?message=" + message);

@@ -4,6 +4,7 @@ const path = require("path");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
 const { DateTime } = require("luxon");
+const nodemailer = require("nodemailer");
 //auth
 const session = require("express-session");
 const bodyParser = require("body-parser");
@@ -76,6 +77,13 @@ const userSchema = new mongoose.Schema({
     startTime: {
         type: Date,
     },
+    verified: {
+        type: Boolean,
+        default:false  
+    },
+    otpGenerated: {
+        type: String,
+    },
     type:String
 
 });
@@ -88,8 +96,8 @@ passport.deserializeUser(User.deserializeUser());
 //==================== routes start ==================================//
 
 app.get("/", function (req, res) {
-    let passed = req.query.message
-     req.session.returnTo = req.originalUrl
+    let passed = req.query.message;
+    req.session.returnTo = req.originalUrl;
     res.render("home",{passed, user:req.user});
 });
 app.get("/about", function (req, res) {
@@ -104,6 +112,7 @@ app.get("/thanks", function (req, res) {
     res.render("thanks",{user:req.user})
 })
 // ========================= Authentication start =================== //
+
 app.get("/login/:type", function (req, res) {
     let type = req.params.type
     let passedMessage = req.query.message;
@@ -126,36 +135,84 @@ app.get("/register/:type", function (req, res) {
 });
 
 // POST for the registration of the user
+app.get("/verificationPage", async function (req, res) {
+    let passedMessage = req.query.message;
+    res.render("verificationPage", { user: req.user, passedMessage });
+});
+app.post("/verifyAccount", async function (req, res) {
+    let otp = req.body.generatedOtp;
+    if (otp === req.user.otpGenerated) {
+        req.user.verified = true;
+        await req.user.save();
+        let message = encodeURIComponent("Congratulations! You are verified.");
+        res.redirect("/?message=" + message);
+    } else {
+        let message = encodeURIComponent("Wrong OTP try again!");
+        res.redirect("verificationPage?message="+message)
+    }
+})
 app.post("/register/:type", async function (req, res) {
     let auth = req.user
     const {first_name,last_name, username, password,registration, contact_number,repassword } = req.body;
-
-    if (password === repassword) {
-        User.register({ username: username }, password, function (err, user) {
-        if (err) {
-            console.log(err);
-            var message = encodeURIComponent("Email Already Exists");
-            res.redirect("/register/user?message="+message);
-        } else {
-            passport.authenticate("local")(req, res, async function () {
-               user.type = req.params.type;
-                user.contact_number = contact_number
-                user.first_name = first_name
-                user.last_name = last_name
-                user.registration = registration
-                await user.save();
-                if(req.params.type === "admin") res.redirect("/adminPanel")
-                res.redirect(req.session.returnTo || '/');
-                delete req.session.returnTo;
-
+    if (username.endsWith("2019@vitstudent.ac.in") || username.endsWith("2020@vitstudent.ac.in")) {
+        if (password === repassword) {
+            User.register({ username: username }, password, function (err, user) {
+                if (err) {
+                    console.log(err);
+                    var message = encodeURIComponent("Email Already Exists");
+                    res.redirect("/register/user?message=" + message);
+                } else {
+                    passport.authenticate("local")(req, res, async function () {
+                        let otp = Math.floor(Math.random() * 10000);
+                        user.type = req.params.type;
+                        user.contact_number = contact_number
+                        user.first_name = first_name
+                        user.last_name = last_name
+                        user.registration = registration
+                        user.otpGenerated = otp
+                        await user.save();
+                        //mailing starts here
+                       
+                        let mailOptions = {
+                            from: "ieterecruitment@gmail.com",
+                            to: username,
+                            subject: "IETE Recruitments 2020 - Registration Verification",
+                            html:
+                                '<body style="padding: 20px; background-color: rgb(25,35,75); color: white;font-family: Roboto; text-align: center">Welcome to IETE Recruitments 2020, <b>' +
+                                first_name +
+                                "</b><br><br><h2>Your Email Verification code is <b>" +
+                                otp +
+                                "</b></h2><br>Please use this code to verify your account. <br><br>Best Regards,<br>IETE VIT</body>",
+                        };
+                        let transporter = nodemailer.createTransport({
+                            host: "smtp.gmail.com",
+                            port: 587,
+                            secure: false, // true for 465, false for other ports
+                            auth: {
+                                user: "ieterecruitment@gmail.com",
+                                pass: "Hello@123",
+                            },
+                            tls: {
+                                rejectUnauthorized: false
+                            }
+                        });
+                        await transporter.sendMail( mailOptions );
+                        //mailing ends
+                        if (req.params.type === "admin") res.redirect("/adminPanel")
+                        res.redirect("/verificationPage");
+                        delete req.session.returnTo;
+                    });
+                }
             });
+        
+        } else {
+            var message = encodeURIComponent('Passwords do not match!');
+            res.redirect('/register/' + req.params.type + '?message=' + message);
         }
-    });
     } else {
-          var message = encodeURIComponent('Passwords do not match!');      
-          res.redirect('/register/'+ req.params.type +'?message=' + message);     
-    }    
- 
+        var message = encodeURIComponent('Only vit mail address of first and second years is allowed!');
+        res.redirect('/register/' + req.params.type + '?message=' + message);
+    }
      
 });
 

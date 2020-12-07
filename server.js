@@ -64,18 +64,14 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now()
     },
-    attempted: {
-        type: Boolean,
-        default:false
-    },
     correctAnswers: {
-        type: Object,
+        type: Array,
     },
     allAnswers: {
-        type:Object
+        type:Array
     },
     startTime: {
-        type: Date,
+        type: Array,
     },
     verified: {
         type: Boolean,
@@ -274,12 +270,20 @@ app.get("/logout", function (req, res) {
 // ===================== get and post for quiz ================= //
 app.get("/instruction/:domain", function (req, res) {
     let auth = req.isAuthenticated();
-    if (auth) {
-        if (!req.user.attempted) {
+    if (auth && req.user.verified) {
+        let num = 0
+        req.user.correctAnswers.forEach(function (e) {
+            if (e.domain === req.params.domain) {
+                num += 1
+            }
+        });
+        if (num == 0) {
             let domain = req.params.domain;
-            res.render("instructions",{domain,user:req.user})
+            num = 0
+            res.render("instructions", { domain, user: req.user });
         } else {
-            let message = encodeURIComponent("All ready attempted!")
+            let message = encodeURIComponent("All ready attempted!");
+            num = 0
             res.redirect("/?message=" + message);
         }
         
@@ -290,16 +294,26 @@ app.get("/instruction/:domain", function (req, res) {
 })
 app.get("/quizPortal/:domain", async function (req, res) {
     let auth = req.isAuthenticated();
-    if (auth) {
-        if (!req.user.attempted) {
-            if (req.user.startTime) {
-                let difference = Date.now() - req.user.startTime;
-                let remainingTime = Math.round((difference/1000)/60);
-            } else {
-                req.user.startTime = Date.now();
-                req.user.save()
+    if (auth && req.user.verified) {
+        let num = 0
+        req.user.correctAnswers.forEach(function (e) {
+            if (e.domain === req.params.domain) {
+                num += 1
             }
-            
+        });
+        if (num == 0 ) {
+            num = 0;
+            tnum = 0;
+            req.user.startTime.forEach(function (e) {
+                if (e.domain === req.params.domain) {
+                    tnum += 1
+                };
+            });
+            if (tnum === 0) {
+                req.user.startTime.push({ domain: req.params.domain, startTime: Date.now() })
+                req.user.save();
+                tnum = 0
+            } 
             let domain = req.params.domain
             if (domain === "ece") {
                 let quizQuestions = await QuizEce.find();
@@ -326,7 +340,8 @@ app.get("/quizPortal/:domain", async function (req, res) {
                 let message = encodeURIComponent("Don't try to act smart!");
                 res.redirect("/?message=" + message);
             }
-        }else {
+        } else {
+            num = 0
             let message = encodeURIComponent("All ready attempted!")
             res.redirect("/?message=" + message);
         }
@@ -460,11 +475,10 @@ app.post("/quizPortal/:domain", async function (req, res) {
                 console.log(correctAnswers);
                 res.end(correctAnswers.length.toString())
             }
-            let correctToSubmit = { domain, correctAnswers }
+            let correctToSubmit = { domain, correctAnswers,submittedTime:Date.now() }
             let allAnswers = {domain, quizAnswers}
-            req.user.correctAnswers = correctToSubmit,
-            req.user.allAnswers = allAnswers
-            req.user.attempted = true
+            req.user.correctAnswers.push(correctToSubmit),
+            req.user.allAnswers.push(allAnswers)
             await req.user.save()
             
         } else {

@@ -100,7 +100,7 @@
                 <h6 class="time">Minutes</h6>
             </header>
 
-
+            <input id="domain-input" type="text" style="display: none;" value="<%= domain %>">
             <div class="row">
                 <div class="col-md-3">
                     <!-- Tabs nav -->
@@ -176,9 +176,15 @@
     </script>
     <script>
         $.post("/getUserData", function (data) {
+            let domain = $("#domain-input").val();
             if (data != "null") {
                 let user = JSON.parse(data);
-                let startDate = new Date(user.startTime);
+                let startDate;
+                user.startTime.forEach(function (e) {
+                    if (e.domain === domain) {
+                        startDate = new Date(e.startTime);
+                    }
+                });
                 let difference = Date.now() - startDate;
                 let remainingTime = Math.round((difference / 1000) / 60);
                 let timeLeftToFinish = 10 - remainingTime;

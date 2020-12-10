@@ -352,7 +352,8 @@ app.get("/quizPortal/:domain", async function (req, res) {
 });
 app.post("/quizPortal/:domain", async function (req, res) {
     let auth = req.isAuthenticated();
-    if (auth) {
+    try {   
+        if (auth) {
         let correctAnswers = []
         let quizAnswers = req.body.answers;
         let domain = req.params.domain
@@ -484,8 +485,12 @@ app.post("/quizPortal/:domain", async function (req, res) {
         } else {
              res.end("your score is 0")
         }
-    } else {
-        res.redirect("/login/user")
+        } else {
+        res.redirect("/login/user");
+        };
+         } 
+    catch (error) {
+        console.log(error);
     }
 })
 app.post("/getUserData", async function (req, res) {

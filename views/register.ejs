@@ -19,7 +19,6 @@
     </style>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-
     <title>Recruitment Page</title>
 </head>
 
@@ -46,23 +45,8 @@
                     </li>
 
                     <li class="nav-item divider-vertical">
-                        <a class="nav-link " href="/recruitments">Recruitments</a>
+                        <a class="nav-link r-tab" href="/recruitments">Recruitments</a>
                     </li>
-                    <% if(user){ %>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-user"></i>
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a style="color: black!important;" class="dropdown-item" href="/logout">Logout</a>
-                        </div>
-                    </li>
-                    <% }else{ %>
-                    <li class="nav-item divider-vertical">
-                        <a class="nav-link" href="/login/user">Login</a>
-                    </li>
-                    <% } %>
 
                 </ul>
                 <ul class="navbar-nav ml-auto">
@@ -110,25 +94,29 @@
 
                     <label for="">
                         <input name="username" placeholder=" " type="email" class="form-control">
-                        <span>Email</span>
+                        <span>VIT-Email</span>
                     </label>
 
                 </div>
                 <br>
+
                 <div class="form-wrapper">
 
                     <label for="">
-                        <input name="registration" placeholder=" " type="text" class="form-control">
-                        <span>Registration Number</span>
+                        <input name="username" placeholder=" " type="email" class="form-control">
+                        <span><u></u>Register No.</span>
                     </label>
 
                 </div>
+                <br>
+
+
                 <br>
                 <div class="form-wrapper">
 
                     <label for="">
                         <input name="contact_number" placeholder=" " type="text" class="form-control">
-                        <span>Phone Number</span>
+                        <span>Phone No.</span>
                     </label>
 
                 </div>
@@ -146,7 +134,7 @@
 
                     <label for="">
                         <input name="repassword" placeholder=" " type="password" class="form-control">
-                        <span>Re type password</span>
+                        <span>Retype password</span>
                     </label>
 
                 </div>

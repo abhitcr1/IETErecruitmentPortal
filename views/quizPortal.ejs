@@ -194,10 +194,11 @@
                         let selected = $(this).text()
                         $(".toSave").unbind().click(function () {
                             let answer = {
-                                question: $(this).parent().attr("question"),
+                                question: $(this).parent().parent().attr("question"),
                                 answer: selected
                             }
                             answers.push(answer);
+
                             $(this).addClass("invisible")
                             $(this).after(` <button class=" btn btn-success disabled">Submitted</button>`);
 

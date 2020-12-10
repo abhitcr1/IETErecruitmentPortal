@@ -1,5 +1,5 @@
 const express = require("express");
-const PORT = 10000;
+const PORT = 10000 || process.env.PORT;
 const path = require("path");
 const ejs = require("ejs");
 const mongoose = require("mongoose");

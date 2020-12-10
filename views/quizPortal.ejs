@@ -27,7 +27,7 @@
         }
 
         button {
-            border-radius: 30px !important;
+            border-radius: 3px !important;
             padding: 10px 20px !important;
         }
 
@@ -98,6 +98,9 @@
                 <h6 class="time">Time Remaining: </h6>
                 <h6 class="time special" id="timeRemaining"></h6>
                 <h6 class="time">Minutes</h6>
+                <div class="time">
+                    <button id="finalSubmit" class="btn btn-info">Submit Quiz</button>
+                </div>
             </header>
 
             <input id="domain-input" type="text" style="display: none;" value="<%= domain %>">
@@ -126,15 +129,19 @@
                             <h4 class="font-italic mb-4">Q. <%= q.question %> </h4>
                             <p class="font-italic text-muted mb-2">
                             <ul question="<%= q.question %> ">
-                                <% if(q.type === "MCQ"){ %>
-                                <% q.options.forEach(function(l){ %>
-                                <li> <button class="option btn btn-primary"><%= l %> </button></li>
-                                <% }) %>
-                                <button class="toSave btn btn-success">Submit</button>
-                                <% }else{ %>
-                                <textarea class="LAAnsers" name="" id="" cols="60" rows="5"></textarea>
-                                <button class=" btn btn-success disabled">It will be automatically submitted.</button>
-                                <% } %>
+                                <div class="row">
+                                    <% if(q.type === "MCQ"){ %>
+                                    <% q.options.forEach(function(l){ %>
+                                    <li class="col-lg-6" style="text-align: center;"> <button
+                                            class="option btn btn-primary"><%= l %> </button></li>
+                                    <% }) %>
+                                    <button style="text-align: center;margin:auto"
+                                        class=" toSave btn btn-success">Submit</button>
+                                    <% }else{ %>
+                                    <textarea class="LAAnsers" name="" id="" cols="60" rows="5"></textarea>
+                                    <p style="color: rgba(0, 0, 0, 0.596);">*It will be automatically submitted.</p>
+                                    <% } %>
+                                </div>
                             </ul>
                             </p>
                         </div>
@@ -143,19 +150,12 @@
                     </div>
                 </div>
             </div>
-            <div style="text-align: right;">
-                <button id="finalSubmit" class="btn btn-danger">Submit Quiz</button>
-            </div>
+
 
         </div>
 
     </section>
 
-    <!--Footer-->
-
-    <div class="footer">
-        <div class="fixed-bottom footer-content">Visit us at <strong>https://ietevit.com/ </strong></div>
-    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

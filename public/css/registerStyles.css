@@ -248,7 +248,7 @@ a:hover {
     font-size: 22px;
     font-family: "Roboto", sans-serif;
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 22px;
     color: #fff;
     letter-spacing: 2px;
 }
@@ -260,6 +260,7 @@ form {
 
 .form-group {
     display: flex;
+    padding-bottom: 10px;
 }
 .form-group .form-wrapper {
     width: 50%;
@@ -269,7 +270,7 @@ form {
 }
 
 .form-wrapper {
-    margin-bottom: 17px;
+    margin-bottom: 0px;
 }
 .form-wrapper label {
     margin-bottom: 9px;
@@ -414,7 +415,7 @@ select option[value=""][disabled] {
 
 /*# sourceMappingURL=style.css.map */
 label {
-    margin: 20px 0;
+    margin: 10px 0;
     position: relative;
     display: inline-block;
 }

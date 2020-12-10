@@ -360,6 +360,7 @@ app.post("/quizPortal/:domain", async function (req, res) {
         if (quizAnswers) {
             if (domain === "ece") {
                 let questions = await QuizEce.find();
+                console.log(questions);
                 quizAnswers.forEach(f => {
                     for (let i = 0; i < questions[0].questions.length; i++) {
                         const e = questions[0].questions[i];

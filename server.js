@@ -149,6 +149,7 @@ app.post("/verifyAccount", async function (req, res) {
 })
 app.post("/register/:type", async function (req, res) {
     let auth = req.user
+    console.log(req.body);
     const {first_name,last_name, username, password,registration, contact_number,repassword } = req.body;
     if (username.endsWith("2019@vitstudent.ac.in") || username.endsWith("2020@vitstudent.ac.in")) {
         if (password === repassword) {

@@ -210,7 +210,7 @@
                         $(".LAAnsers").each(function (i, data) {
                             if ($(this).val()) {
                                 let answer = {
-                                    question: $(this).parent().attr("question"),
+                                    question: $(this).parent().parent().attr("question"),
                                     answer: $(this).val()
                                 };
 
